@@ -3,17 +3,14 @@ import { AuthCredentialsDTO as Before } from 'src/auth/dto/auth-credentials-befo
 import { AuthCredentialsDTO as After } from 'src/auth/dto/auth-credentials.dto';
 
 @Injectable()
-export class TransformTokenPipe implements PipeTransform {
+export class TransformBooleansPipe implements PipeTransform {
   transform(value: Before) {
     const credentials = new After();
-    if (Array.isArray(value.password)) {
-      credentials.password = value.password.reduce(
-        (a, b) => a.toString() + b.toString(),
-      );
-    } else credentials.password = value.password;
-
+    if (typeof value.remember === 'string') {
+      credentials.remember = value.remember === 'true';
+    }
+    credentials.password = value.password as unknown as string;
     credentials.username = value.username;
-    credentials.remember = value.remember as any;
     credentials.pushToken = value.pushToken;
     return credentials;
   }

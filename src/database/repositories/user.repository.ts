@@ -12,10 +12,10 @@ export class UserRepository extends Repository<User> {
   async signUp(createCredentialsDto: CreateUserDTO): Promise<User> {
     try {
       const user = this.create(createCredentialsDto);
-      return user.save();
+      return await user.save();
     } catch (err) {
-      if (err.code == 23505)
-        throw new ConflictException('Username already exists');
+      if ([11000, 23505].includes(err.code))
+        throw new ConflictException('Username or Email already exists');
       else throw new InternalServerErrorException();
     }
   }
@@ -32,5 +32,9 @@ export class UserRepository extends Repository<User> {
 
   async findByUsername(username: string) {
     return this.findOne({ where: { username } });
+  }
+
+  async findByEmail(email: string) {
+    return this.findOne({ where: { email } });
   }
 }

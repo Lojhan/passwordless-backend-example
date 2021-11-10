@@ -1,9 +1,17 @@
 import * as moment from 'moment';
-import { BaseEntity, Column, Entity, PrimaryColumn, Unique } from 'typeorm';
+import {
+  BaseEntity,
+  Column,
+  Entity,
+  PrimaryColumn,
+  ObjectIdColumn,
+} from 'typeorm';
 import { v4 as uuid } from 'uuid';
 
 @Entity({ name: 'users' })
-@Unique(['username'])
+// @Unique(['username'])
+// @Unique(['id'])
+// @Unique(['email'])
 export class User extends BaseEntity {
   constructor(
     username?: string,
@@ -20,10 +28,11 @@ export class User extends BaseEntity {
     this.region = region;
     this.phoneNumber = phoneNumber;
     this.profilePicturePath = profilePicturePath;
-    this.id = uuid();
+    // this.id = uuid();
   }
 
-  @PrimaryColumn()
+  // @PrimaryColumn()
+  @ObjectIdColumn()
   id: string;
 
   @PrimaryColumn()
@@ -41,7 +50,7 @@ export class User extends BaseEntity {
   @Column()
   role: 'user' | 'adm' = 'adm';
 
-  @Column()
+  @PrimaryColumn()
   email: string;
 
   @Column({ nullable: true })
@@ -55,6 +64,12 @@ export class User extends BaseEntity {
 
   @Column()
   region: string;
+
+  @Column({ nullable: true })
+  firebaseToken: string;
+
+  @Column({ nullable: true })
+  oneSignalToken: string;
 
   validatePassword(password: string): boolean {
     if (moment().isAfter(this.tokenValidation)) return false;

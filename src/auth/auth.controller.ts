@@ -3,7 +3,9 @@ import {
   Controller,
   Get,
   Headers,
+  Patch,
   Post,
+  Put,
   UseGuards,
   ValidationPipe,
 } from '@nestjs/common';
@@ -19,6 +21,10 @@ import { GenerateTokenDTO } from './dto/generate-token-dto';
 import { TransformTokenPipe } from 'src/pipes/transform-token.pipe';
 import { SignInResponse } from './dto/sign-in-response.dto';
 import { ApiOperation, ApiResponse, ApiBody, ApiTags } from '@nestjs/swagger';
+import { TransformBooleansPipe } from 'src/pipes/transform-booleans.pipe';
+import { GetUser } from 'src/decorators/get-user.decorator';
+import { TokenInfo } from './dto/token-info.dto';
+import { UpdateUserDTO } from './dto/update-user.dto';
 
 @Controller('auth')
 @ApiTags('Authentication')
@@ -40,7 +46,7 @@ export class AuthController {
   @ApiBody({ type: () => GenerateTokenDTO })
   generateToken(
     @Body(ValidationPipe) generateTokenDTO: GenerateTokenDTO,
-  ): Promise<void> {
+  ): Promise<string> {
     return this.authService.generateToken(generateTokenDTO);
   }
 
@@ -53,20 +59,28 @@ export class AuthController {
   })
   @ApiResponse({ status: 401 })
   signIn(
-    @Body(ValidationPipe, TransformTokenPipe)
+    @Body(ValidationPipe, TransformTokenPipe, TransformBooleansPipe)
     authCredentialsDto: AuthCredentialsDTO,
   ): Promise<SignInResponse> {
+    console.log(authCredentialsDto);
     return this.authService.signIn(authCredentialsDto);
   }
 
-  verify(@Body(ValidationPipe) token: TokenPayload): Promise<string> {
-    return this.authService.verifyJwt(token.token);
+  @Get('token')
+  @UseGuards(AuthGuard())
+  getToken(@GetUser() user: User): TokenInfo {
+    const { tokenUsed, tokenValidation, password } = user;
+    return { token: password, tokenUsed, tokenValidation } as TokenInfo;
   }
 
-  @Get('verify')
-  @Roles('adm', 'user')
-  @UseGuards(AuthGuard(), RolesGuard)
-  create(@Headers('Authorization') token: string) {
-    return this.authService.verifyJwt(token);
+  @Patch('update-user')
+  @Put('update-user')
+  @UseGuards(AuthGuard())
+  @ApiOperation({ summary: 'Updates user from given data' })
+  updateUser(
+    @GetUser() user: User,
+    @Body(ValidationPipe) authCredentialsDto: UpdateUserDTO,
+  ): Promise<User> {
+    return this.authService.update(authCredentialsDto, user);
   }
 }

@@ -11,7 +11,8 @@ export class AuthCredentialsDTO {
   @ApiProperty()
   password: string;
 
-  @IsBoolean()
   @ApiProperty()
   remember: boolean;
+
+  pushToken: string;
 }

@@ -1,10 +1,14 @@
-import { ApiProperty } from '@nestjs/swagger';
-import { MaxLength, MinLength, IsString } from 'class-validator';
-
+import { IsString, IsEmail } from 'class-validator';
 export class GenerateTokenDTO {
+  // @IsString()
+  // @MinLength(4)
+  // @MaxLength(20)
+  // @ApiProperty()
+  // username: string;
+
+  @IsEmail()
+  email: string;
+
   @IsString()
-  @MinLength(4)
-  @MaxLength(20)
-  @ApiProperty()
-  username: string;
+  method: 'push' | 'mail' = 'mail';
 }

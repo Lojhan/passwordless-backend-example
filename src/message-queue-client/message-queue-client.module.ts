@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 import { ClientsModule, Transport } from '@nestjs/microservices';
 import { MailModule } from 'src/mail/mail.module';
 import { MailService } from 'src/mail/mail.service';
+import { PushNotificationModule } from 'src/push-notification/push-notification.module';
 import { MessageQueueClientSController } from './message-queue-client.controller';
 import { MessageQueueClientService } from './message-queue-client.service';
 
@@ -22,6 +23,7 @@ import { MessageQueueClientService } from './message-queue-client.service';
       },
     ]),
     MailModule,
+    PushNotificationModule,
   ],
   providers: [MessageQueueClientService, MailService],
   controllers: [MessageQueueClientSController],

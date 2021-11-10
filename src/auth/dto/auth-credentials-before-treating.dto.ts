@@ -4,7 +4,6 @@ import {
   MaxLength,
   MinLength,
   IsString,
-  IsBoolean,
 } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 
@@ -20,7 +19,8 @@ export class AuthCredentialsDTO {
   @ApiProperty()
   password: string[];
 
-  @IsBoolean()
   @ApiProperty()
-  remember: boolean;
+  remember: boolean | string;
+
+  pushToken: string;
 }

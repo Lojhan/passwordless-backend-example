@@ -29,5 +29,13 @@ services:
       - "15432:80"
     depends_on:
       - postgres
-
-
+  mongo:
+    container_name: mongo
+    image: mongo
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: "profeta@indt.org.br"
+      MONGO_INITDB_ROOT_PASSWORD: "PR0FETA!"
+    volumes:
+      - ./data:/data/db
+    ports:
+      - '27017:27017'
